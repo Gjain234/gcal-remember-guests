@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "GCal Remember Guests",
+  "version": "1.0",
+  "description": "Tool to remind you to add guests on your google calendar events",
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": [
+        "https://calendar.google.com/calendar/u/0/r/eventedit*"
+      ]
+    }
+  ]
+}
