@@ -7,7 +7,7 @@ errorMsgContainer.className = 'reminder-error'
 
 //text bit
 const errorMsg = document.createElement('span')
-errorMsg.innerText = 'Seems like you are creating a meeting with someone else, please remember to add other people too.'
+errorMsg.innerText = 'Remember to include other people when scheduling a meeting.'
 
 //icon
 const errorIcon = document.createElement('i')
