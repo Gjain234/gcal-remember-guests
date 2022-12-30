@@ -1,0 +1,27 @@
+.reminder-error{
+   display: inline-flex;
+   flex-direction: row;
+   align-items: top;
+   padding: 12px;
+   width: 368px;
+   margin: 0 24px 24px 24px;
+   border-radius: 6px;
+}
+
+.reminder-error span {
+    color: #3c4043;
+    font-size: 12px;
+    line-height: 20px;
+    font-family: 'Roboto';
+    margin-left: 8px;
+    display: block;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+
+.reminder-error i {
+    font-size: 16px;
+    color: #d32f2f;
+    margin-top: 4px;
+}

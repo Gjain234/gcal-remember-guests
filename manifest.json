@@ -5,9 +5,10 @@
   "description": "Tool to remind you to add guests on your google calendar events",
   "content_scripts": [
     {
+      "css": ["css/inject.css"],
       "js": ["scripts/content.js"],
       "matches": [
-        "https://calendar.google.com/calendar/u/0/r/eventedit*"
+        "https://calendar.google.com/*"
       ]
     }
   ]
