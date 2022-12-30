@@ -48,6 +48,10 @@ createBtn.onclick = function () {
             }
             //stop the timer
             clearInterval(readyStateCheckInterval);
+
+            //also hide the error once the dialog is closed
+            errorMsgContainer.style.display = 'none'
+            errorMsgContainer.style.opacity = 0
         }
     }, 10);
 }
