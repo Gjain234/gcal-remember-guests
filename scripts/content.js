@@ -8,6 +8,7 @@ function checkUrlChange() {
             eventEditPage();
         }
         else {
+            errorMsgContainer.classList.remove('reminder-error-create-page')
             eventEditDialog();
         }
         oldURL = newURL;
