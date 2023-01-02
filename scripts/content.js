@@ -51,7 +51,7 @@ function eventEditPage() {
             clearInterval(readyStateCheckInterval);
             guest_section.classList.add("guest-section-override");
             guest_section.appendChild(errorMsgContainer);
-            function handleEvent() {
+            function handleEventPageEdit() {
                 people_invited_count = guest_list.childElementCount;
                 title_value = title_element.value.toLowerCase();
                 if (meetingChecks.some(identifier => title_value.includes(identifier)) && people_invited_count == 0) {
@@ -64,10 +64,10 @@ function eventEditPage() {
                 }
             };
             function addGuests() {
-                setTimeout(handleEvent, 2000);
+                setTimeout(handleEventPageEdit, 2000);
             };
             // call events on title change / click
-            title_element.oninput = handleEvent;
+            title_element.oninput = handleEventPageEdit;
             window.addEventListener("click", addGuests, false);
         }
     }, 10);
@@ -83,7 +83,7 @@ function eventEditDialog() {
                 document.querySelector('[role="tabpanel"]').parentElement.appendChild(errorMsgContainer)
                 //listen for inpiut
                 let isMeetingWithSomeone
-                function handleEvent() {
+                function handleEventDialogEdit() {
                     //check if the meeting name has any of the signals that it is not a single person meeting
                     isMeetingWithSomeone = meetingChecks.some(identifier => eventNameInput.value.toLowerCase().includes(identifier));
                     people_invited_count = event_list?.childElementCount;
@@ -96,11 +96,11 @@ function eventEditDialog() {
                         errorMsgContainer.style.display = 'none'
                     }
                 }
-                function addGuests() {
-                    setTimeout(handleEvent, 2000);
+                function addGuestsDialog() {
+                    setTimeout(handleEventDialogEdit, 2000);
                 }
-                eventNameInput.oninput = handleEvent;
-                window.addEventListener("click", addGuests, false);
+                eventNameInput.oninput = handleEventDialogEdit;
+                window.addEventListener("click", addGuestsDialog, false);
                 //stop the timer
                 clearInterval(readyStateCheckInterval);
 
