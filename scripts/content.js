@@ -73,7 +73,6 @@ function eventEditPage() {
     }, 10);
 }
 function eventEditDialog() {
-    errorMsgContainer.className = 'reminder-error'
     createBtn.onclick = function () {
         let readyStateCheckInterval = setInterval(function () {
             const eventNameInput = document.querySelector('[aria-label="Add title"]')
@@ -87,9 +86,9 @@ function eventEditDialog() {
                 function handleEvent() {
                     //check if the meeting name has any of the signals that it is not a single person meeting
                     isMeetingWithSomeone = meetingChecks.some(identifier => eventNameInput.value.toLowerCase().includes(identifier));
-                    people_invited_count = document.querySelector('[aria-label="Guests invited to this event."]').childElementCount;
+                    people_invited_count = event_list?.childElementCount;
                     //depending on our guess, show/hide the error
-                    if (isMeetingWithSomeone && people_invited_count == 0) {
+                    if (isMeetingWithSomeone && people_invited_count != null && people_invited_count == 0) {
                         errorMsgContainer.style.opacity = 1
                         errorMsgContainer.style.display = 'inline-flex'
                     } else {
