@@ -10,17 +10,8 @@
 }
 
 .reminder-error-create-page{
-   display: inline-flex;
-   flex-direction: row;
-   align-items: top;
-   padding: 12px;
-   margin-top: 8px;
-   margin-right: 0;
-   margin-bottom: 0;
-   margin-left: 0;
-   border-radius: 6px;
-   background-color: #FFEBEE;
-   max-width: calc(100% - 24px);
+    width: calc(100% - 24px);
+    margin: 24px 0 0 0;
 }
 
 .reminder-error span{

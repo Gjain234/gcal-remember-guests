@@ -1,29 +1,27 @@
 // keep checking URL
-var oldURL= ""
-function checkUrlChange(){
-  newURL = document.URL;
-  if(newURL !== oldURL && newURL != null){
-   if (newURL.includes("eventedit")) {
-    errorMsgContainer.className = 'reminder-error-create-page'
-    eventEditPage();
-   }
-   else {
-    errorMsgContainer.className = 'reminder-error'
-    eventEditDialog();
-   }
-    oldURL = newURL;
-  }
+var oldURL = ""
+function checkUrlChange() {
+    newURL = document.URL;
+    if (newURL !== oldURL && newURL != null) {
+        if (newURL.includes("eventedit")) {
+            errorMsgContainer.classList.add('reminder-error-create-page')
+            eventEditPage();
+        }
+        else {
+            eventEditDialog();
+        }
+        oldURL = newURL;
+    }
 };
 
 const createBtn = document.querySelector('[aria-label="Create"]') //get the Create event button
 const meetingChecks = ['<>', '|', 'sync', 'chat', ':', 'meeting'] //identifiers of a meeting
 errorMsgContainer = document.createElement('div')
-errorMsgContainer.className = 'reminder-error-create-page'
+errorMsgContainer.className = 'reminder-error'
 
 //text bit
 errorMsg = document.createElement('span')
 errorMsg.innerText = 'Remember to include other people when scheduling a meeting.'
-errorMsg.className = 'reminder-error'
 
 //icon
 errorIcon = document.createElement('i')
@@ -43,8 +41,8 @@ var urlChangeHandler = window.setInterval(checkUrlChange, 10);
 // js for event edit page vs dialog
 
 function eventEditPage() {
-    errorMsgContainer.className = 'reminder-error-create-page'
-    let readyStateCheckInterval  = setInterval(function () {
+    errorMsgContainer.classList.add('reminder-error-create-page')
+    let readyStateCheckInterval = setInterval(function () {
         guest_input = document.querySelector('[aria-label="Guests"]');
         guest_section = getParentNode(guest_input, 5);
         guest_list = document.getElementById("xGstLst")?.children[0];
@@ -119,8 +117,8 @@ function eventEditDialog() {
 function getParentNode(element, level = 1) { // 1 - default value (if no 'level' parameter is passed to the function)
     if (!element) return null
     while (level-- > 0) {
-      element = element.parentNode;
-      if (!element) return null; // to avoid a possible "TypeError: Cannot read property 'parentNode' of null" if the requested level is higher than document
+        element = element.parentNode;
+        if (!element) return null; // to avoid a possible "TypeError: Cannot read property 'parentNode' of null" if the requested level is higher than document
     }
     return element;
 }
