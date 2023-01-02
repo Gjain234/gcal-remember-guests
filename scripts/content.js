@@ -42,7 +42,6 @@ var urlChangeHandler = window.setInterval(checkUrlChange, 10);
 // js for event edit page vs dialog
 
 function eventEditPage() {
-    errorMsgContainer.classList.add('reminder-error-create-page')
     let readyStateCheckInterval = setInterval(function () {
         guest_input = document.querySelector('[aria-label="Guests"]');
         guest_section = getParentNode(guest_input, 5);
