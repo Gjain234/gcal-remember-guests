@@ -54,9 +54,9 @@ function eventEditPage() {
             guest_section.classList.add("guest-section-override");
             guest_section.appendChild(errorMsgContainer);
             function handleEventPageEdit() {
-                people_invited_count = guest_list.childElementCount;
+                people_invited_count = guest_list?.childElementCount;
                 title_value = title_element.value.toLowerCase();
-                if (meetingChecks.some(identifier => title_value.includes(identifier)) && people_invited_count == 0) {
+                if (meetingChecks.some(identifier => title_value.includes(identifier)) && people_invited_count != null &&  people_invited_count == 0) {
                     errorMsgContainer.style.opacity = 1
                     errorMsgContainer.style.display = 'inline-flex'
                 }
