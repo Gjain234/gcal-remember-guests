@@ -19,47 +19,44 @@ errorMsgContainer.appendChild(errorMsg)
 errorMsgContainer.style.display = 'none'
 errorMsgContainer.style.opacity = 0
 
-// attach message to certain observed events
-addErrorMessage();
-
-// conditionally add error message if event should have guests
-function addErrorMessage() {
-    var observer = new MutationObserver(function(mutations, observer) {
-        for (var i = 0; i < mutations.length; i++) {
-            if (mutations[i].addedNodes.length>0 && (mutations[i].target.innerHTML.includes("Add title") || mutations[i].target.innerHTML.includes("Title"))){
-                isEventPage = document.URL.includes("eventedit");
-                isEventPage ? initializeEventEditPage() : initializeEventEditDialog()
-                handleEventEdit();
-                if (eventNameInput!=null){
-                    eventNameInput.oninput = handleEventEdit;
-                }
+// re-perform meeting check on the event every time event is edited
+var observer = new MutationObserver(function(mutations, observer) {
+    for (var i = 0; i < mutations.length; i++) {
+        if (mutations[i].addedNodes.length>0 && (mutations[i].target.innerHTML.includes("Add title") || mutations[i].target.innerHTML.includes("Title"))){
+            isEventPage = document.URL.includes("eventedit");
+            isEventPage ? initializeEventEditPage() : initializeEventEditDialog()
+            handleEventEdit();
+            if (eventNameInput!=null){
+                eventNameInput.oninput = handleEventEdit;
             }
-            if (mutations[i]?.target?.ariaLabel == "Guests invited to this event."){
-                handleEventEdit();
-           }
         }
-    });
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-    function handleEventEdit() {
-        //check if the meeting name has any of the signals that it is not a single person meeting
-        eventNameInput = isEventPage ? document.querySelector('[aria-label="Title"]') : document.querySelector('[aria-label="Add title"]');
-        if (eventNameInput==null){
-            return;
-        }
-        isMeetingWithSomeone = MEETING_CHECKS.some(identifier => eventNameInput.value.toLowerCase().includes(identifier));
-        guestList = document.querySelector('[aria-label="Guests invited to this event."]');
-        peopleInvitedCount = guestList?.childElementCount;
-        //depending on our guess, show/hide the error
-        if (isMeetingWithSomeone && peopleInvitedCount != null && peopleInvitedCount == 0) {
-            errorMsgContainer.style.opacity = 1
-            errorMsgContainer.style.display = 'inline-flex'
-        } else {
-            errorMsgContainer.style.opacity = 0
-            errorMsgContainer.style.display = 'none'
-        }
+        if (mutations[i]?.target?.ariaLabel == "Guests invited to this event."){
+            handleEventEdit();
+       }
+    }
+});
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+
+// check if current event should have guests or not, and add error message if guests are needed.
+function handleEventEdit() {
+    //check if the meeting name has any of the signals that it is not a single person meeting
+    eventNameInput = isEventPage ? document.querySelector('[aria-label="Title"]') : document.querySelector('[aria-label="Add title"]');
+    if (eventNameInput==null){
+        return;
+    }
+    isMeetingWithSomeone = MEETING_CHECKS.some(identifier => eventNameInput.value.toLowerCase().includes(identifier));
+    guestList = document.querySelector('[aria-label="Guests invited to this event."]');
+    peopleInvitedCount = guestList?.childElementCount;
+    //depending on our guess, show/hide the error
+    if (isMeetingWithSomeone && peopleInvitedCount != null && peopleInvitedCount == 0) {
+        errorMsgContainer.style.opacity = 1
+        errorMsgContainer.style.display = 'inline-flex'
+    } else {
+        errorMsgContainer.style.opacity = 0
+        errorMsgContainer.style.display = 'none'
     }
 }
 
@@ -78,7 +75,7 @@ function initializeEventEditDialog() {
     eventNameInput = document.querySelector('[aria-label="Add title"]');
 }
 
-// helper functions
+// extra helper functions
 function getParentNode(element, level = 1) { // 1 - default value (if no 'level' parameter is passed to the function)
     if (!element) return null
     while (level-- > 0) {
