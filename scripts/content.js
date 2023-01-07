@@ -1,113 +1,81 @@
-// keep checking URL
-var oldURL = ""
-var currInterval = null
-function checkUrlChange() {
-    newURL = document.URL;
-    if (newURL !== oldURL && newURL != null) {
-        if (newURL.includes("eventedit")) {
-            errorMsgContainer.classList.add('reminder-error-create-page')
-            clearInterval(currInterval)
-            currInterval = eventEditPage();
-        }
-        else {
-            errorMsgContainer.classList.remove('reminder-error-create-page')
-            clearInterval(currInterval)
-            currInterval = eventEditDialog();
-        }
-        oldURL = newURL;
-    }
-};
-
-var urlChangeHandler = window.setInterval(checkUrlChange, 10);
-
-const createBtn = document.querySelector('[aria-label="Create"]') //get the Create event button
-const meetingChecks = ['<>', '|', 'sync', 'chat', ':', 'meeting'] //identifiers of a meeting
+const MEETING_CHECKS = ['<>', '|', 'sync', 'chat', ':', 'meeting'] //identifiers of a meeting
 errorMsgContainer = document.createElement('div')
 errorMsgContainer.className = 'reminder-error'
 
-//text bit
+// text bit
 errorMsg = document.createElement('span')
 errorMsg.innerText = 'Remember to include other people when scheduling a meeting.'
 
-//icon
+// icon
 errorIcon = document.createElement('i')
 errorIcon.innerText = 'warning'
 errorIcon.className = 'google-material-icons meh4fc hggPq GyffFb'
 
-//appending the icon and text to the main error container
+// appending the icon and text to the main error container
 errorMsgContainer.appendChild(errorIcon)
 errorMsgContainer.appendChild(errorMsg)
 
-//hiding the error to start with
+// hiding the error to start with
 errorMsgContainer.style.display = 'none'
 errorMsgContainer.style.opacity = 0
 
-// js for event edit page vs dialog
+// attach message to certain observed events
+addErrorMessage();
 
-function eventEditPage() {
-    return setInterval(function () {
-        guest_input = document.querySelector('[aria-label="Guests"]');
-        guest_section = getParentNode(guest_input, 5);
-        guest_list = document.getElementById("xGstLst")?.children[0];
-        title_element = document.getElementById("xTiIn");
-        if (document.readyState === "complete" && guest_section != null && title_element != null && guest_input != null && guest_list != null) {
-            guest_section.classList.add("guest-section-override");
-            guest_section.appendChild(errorMsgContainer);
-            function handleEventPageEdit() {
-                people_invited_count = guest_list?.childElementCount;
-                title_value = title_element.value.toLowerCase();
-                if (meetingChecks.some(identifier => title_value.includes(identifier)) && people_invited_count != null &&  people_invited_count == 0) {
-                    errorMsgContainer.style.opacity = 1
-                    errorMsgContainer.style.display = 'inline-flex'
+// conditionally add error message if event should have guests
+function addErrorMessage() {
+    var observer = new MutationObserver(function(mutations, observer) {
+        for (var i = 0; i < mutations.length; i++) {
+            if (mutations[i].addedNodes.length>0 && (mutations[i].target.innerHTML.includes("Add title") || mutations[i].target.innerHTML.includes("Title"))){
+                isEventPage = document.URL.includes("eventedit");
+                isEventPage ? initializeEventEditPage() : initializeEventEditDialog()
+                handleEventEdit();
+                if (eventNameInput!=null){
+                    eventNameInput.oninput = handleEventEdit;
                 }
-                else {
-                    errorMsgContainer.style.opacity = 0
-                    errorMsgContainer.style.display = 'none'
-                }
-            };
-            function addGuests() {
-                setTimeout(handleEventPageEdit, 2000);
-            };
-            // call events on title change / click
-            title_element.oninput = handleEventPageEdit;
-            window.addEventListener("click", addGuests, false);
+            }
+            if (mutations[i]?.target?.ariaLabel == "Guests invited to this event."){
+                handleEventEdit();
+           }
         }
-    }, 10);
-}
-function eventEditDialog() {
-    return setInterval(function () {
-        const eventNameInput = document.querySelector('[aria-label="Add title"]');
-        guest_input = document.querySelector('[aria-label="Guests"]');
-        guest_list = document.querySelector('[aria-label="Guests invited to this event."]');
-        //check if the pop-up dialog has been created
-        if (eventNameInput != null && guest_list != null && eventNameInput.value!= '') {
-            document.querySelector('[role="tabpanel"]').parentElement.appendChild(errorMsgContainer)
-            //listen for inpiut
-            let isMeetingWithSomeone
-            function handleEventDialogEdit() {
-                //check if the meeting name has any of the signals that it is not a single person meeting
-                isMeetingWithSomeone = meetingChecks.some(identifier => eventNameInput.value.toLowerCase().includes(identifier));
-                people_invited_count = guest_list?.childElementCount;
-                //depending on our guess, show/hide the error
-                if (isMeetingWithSomeone && people_invited_count != null && people_invited_count == 0) {
-                    errorMsgContainer.style.opacity = 1
-                    errorMsgContainer.style.display = 'inline-flex'
-                } else {
-                    errorMsgContainer.style.opacity = 0
-                    errorMsgContainer.style.display = 'none'
-                }
-            }
-            function addGuestsDialog() {
-                setTimeout(handleEventDialogEdit, 2000);
-            }
-            eventNameInput.oninput = handleEventDialogEdit;
-            window.addEventListener("click", addGuestsDialog, false);
-        }else{
-            isMeetingWithSomeone = false;
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    function handleEventEdit() {
+        //check if the meeting name has any of the signals that it is not a single person meeting
+        eventNameInput = isEventPage ? document.querySelector('[aria-label="Title"]') : document.querySelector('[aria-label="Add title"]');
+        if (eventNameInput==null){
+            return;
+        }
+        isMeetingWithSomeone = MEETING_CHECKS.some(identifier => eventNameInput.value.toLowerCase().includes(identifier));
+        guestList = document.querySelector('[aria-label="Guests invited to this event."]');
+        peopleInvitedCount = guestList?.childElementCount;
+        //depending on our guess, show/hide the error
+        if (isMeetingWithSomeone && peopleInvitedCount != null && peopleInvitedCount == 0) {
+            errorMsgContainer.style.opacity = 1
+            errorMsgContainer.style.display = 'inline-flex'
+        } else {
             errorMsgContainer.style.opacity = 0
             errorMsgContainer.style.display = 'none'
         }
-    }, 10);
+    }
+}
+
+// initialize styling for error message depending on whether it is on dialog or new page
+function initializeEventEditPage() {
+    errorMsgContainer.classList.add('reminder-error-create-page');
+    guestInput = document.querySelector('[aria-label="Guests"]');
+    guestSection = getParentNode(guestInput, 5);
+    guestSection.classList.add("guest-section-override");
+    guestSection.appendChild(errorMsgContainer);
+    eventNameInput = document.querySelector('[aria-label="Title"]');
+}
+function initializeEventEditDialog() {
+    errorMsgContainer.classList.remove('reminder-error-create-page')
+    document.querySelector('[role="tabpanel"]').parentElement.appendChild(errorMsgContainer);
+    eventNameInput = document.querySelector('[aria-label="Add title"]');
 }
 
 // helper functions
