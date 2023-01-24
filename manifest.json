@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Google Calendar Guest Remembering Tool",
+  "name": "GCal Guest Reminder",
   "version": "0.0.0.1",
   "description": "Tool to remind you to add guests on your google calendar meetings. Inspired by us repeatedly forgetting to invite guests...",
   "icons": {

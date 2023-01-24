@@ -1,4 +1,4 @@
-const MEETING_CHECKS = ['<>', '|', 'sync', 'chat', ':', 'meeting'] //identifiers of a meeting
+const MEETING_CHECKS = ['<>', '|', 'sync', 'chat', ':', 'meeting', 'chai', 'coffee', 'tea'] //identifiers of a meeting
 errorMsgContainer = document.createElement('div')
 errorMsgContainer.className = 'reminder-error'
 
